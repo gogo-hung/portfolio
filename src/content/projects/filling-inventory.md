@@ -4,7 +4,7 @@ summary: 讓百貨專櫃用手機直接盤點，老闆在後台即時看各櫃�
 category: 系統
 tech: [手機網頁 App, 管理後台, Excel 匯出, Cloudflare Pages]
 status: 上線中
-order: 6
+order: 5
 featured: false
 color: "#e67e22"
 cover: /covers/filling.jpg

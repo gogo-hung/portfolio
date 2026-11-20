@@ -4,7 +4,7 @@ summary: 學校的課表維護系統，內建 AI 排課助理和智慧調補課�
 category: 系統
 tech: [系統分析, 物件導向設計, AI 排課]
 status: 開發中
-order: 5
+order: 6
 featured: false
 color: "#d35400"
 ---
