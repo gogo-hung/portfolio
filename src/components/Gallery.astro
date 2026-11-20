@@ -1,0 +1,86 @@
+---
+// 作品畫面：多張截圖，點一下放大，可左右切換
+interface Props { images: { src: string; caption?: string }[] }
+const { images } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const url = (s: string) => (s.startsWith('http') ? s : base + s.replace(/^\//, ''));
+---
+{images.length > 0 && (
+  <section class="gallery-wrap">
+    <h2 class="g-title">作品畫面 <span>{images.length} 張</span></h2>
+    <div class={`gallery n${Math.min(images.length, 3)}`}>
+      {images.map((img, i) => (
+        <figure>
+          <button class="shot" data-i={i} aria-label={`放大第 ${i + 1} 張`}>
+            <img src={url(img.src)} alt={img.caption ?? ''} loading="lazy" />
+          </button>
+          {img.caption && <figcaption>{img.caption}</figcaption>}
+        </figure>
+      ))}
+    </div>
+
+    <div class="lightbox" hidden>
+      <button class="lb-close" aria-label="關閉">×</button>
+      <button class="lb-nav lb-prev" aria-label="上一張">‹</button>
+      <figure class="lb-fig">
+        <img class="lb-img" alt="" />
+        <figcaption class="lb-cap"></figcaption>
+      </figure>
+      <button class="lb-nav lb-next" aria-label="下一張">›</button>
+    </div>
+  </section>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('.gallery-wrap').forEach((wrap) => {
+    const shots = [...wrap.querySelectorAll<HTMLButtonElement>('.shot')];
+    const lb = wrap.querySelector<HTMLElement>('.lightbox')!;
+    const img = lb.querySelector<HTMLImageElement>('.lb-img')!;
+    const cap = lb.querySelector<HTMLElement>('.lb-cap')!;
+    let cur = 0;
+    const show = (i: number) => {
+      cur = (i + shots.length) % shots.length;
+      const s = shots[cur].querySelector('img')!;
+      img.src = s.src;
+      cap.textContent = `${cur + 1} / ${shots.length}${s.alt ? '　' + s.alt : ''}`;
+    };
+    const close = () => { lb.hidden = true; document.body.style.overflow = ''; };
+    shots.forEach((b, i) => b.addEventListener('click', () => {
+      show(i); lb.hidden = false; document.body.style.overflow = 'hidden';
+    }));
+    lb.querySelector('.lb-close')!.addEventListener('click', close);
+    lb.querySelector('.lb-prev')!.addEventListener('click', (e) => { e.stopPropagation(); show(cur - 1); });
+    lb.querySelector('.lb-next')!.addEventListener('click', (e) => { e.stopPropagation(); show(cur + 1); });
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (lb.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(cur - 1);
+      if (e.key === 'ArrowRight') show(cur + 1);
+    });
+  });
+</script>
+
+<style>
+  .gallery-wrap { margin: 0 0 40px; }
+  .g-title { font-size: 21px; margin: 0 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); line-height: 1.4; }
+  .g-title span { font-size: 14px; font-weight: 400; color: var(--faint); margin-left: 4px; }
+  .gallery { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery.n1 { grid-template-columns: 1fr; }
+  figure { margin: 0; }
+  .shot { display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); cursor: zoom-in; }
+  .shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: var(--bg); padding: 10px; transition: transform .25s; }
+  .shot:hover img { transform: scale(1.03); }
+  figcaption { font-size: 13.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  @media (max-width: 600px) { .gallery { grid-template-columns: 1fr; } }
+
+  .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(10, 11, 14, .88); display: flex; align-items: center; justify-content: center; gap: 12px; padding: 24px; }
+  .lightbox[hidden] { display: none; }
+  .lb-fig { margin: 0; max-width: min(1200px, 100%); }
+  .lb-img { max-width: 100%; max-height: 80vh; border-radius: 8px; margin: 0 auto; }
+  .lb-cap { color: #d6d7dc; text-align: center; margin-top: 10px; font-size: 14px; }
+  .lb-close { position: absolute; top: 14px; right: 18px; font-size: 34px; line-height: 1; background: none; border: 0; color: #fff; cursor: pointer; }
+  .lb-nav { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; }
+  .lb-nav:hover { background: rgba(255,255,255,.26); }
+  @media (max-width: 600px) { .lb-nav { position: absolute; bottom: 20px; } .lb-prev { left: 30%; } .lb-next { right: 30%; } }
+</style>

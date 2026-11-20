@@ -1,0 +1,82 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import Gallery from '../../components/Gallery.astro';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('projects', ({ data }) => !data.draft))
+    .sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order);
+  return all.map((p, i) => ({
+    params: { slug: p.id },
+    props: { project: p, prev: all[i - 1], next: all[i + 1] },
+  }));
+}
+
+const { project, prev, next } = Astro.props;
+const { Content } = await render(project);
+const d = project.data;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+<Base title={d.title} description={d.summary}>
+  <article class="wrap article">
+    <a class="back" href={`${base}#projects`}>← 回作品列表</a>
+    <div class="top">
+      <span class={`status s-${d.status}`}>{d.status}</span>
+      <span class="cat">{d.category}</span>
+    </div>
+    <h1>{d.title}</h1>
+    <p class="lead">{d.summary}</p>
+    <div class="tags">{d.tech.map((t) => <span class="tag">{t}</span>)}</div>
+
+    {(d.demo || d.github) && (
+      <div class="links">
+        {d.demo && <a class="btn primary" href={d.demo} target="_blank" rel="noopener">線上 Demo ↗</a>}
+        {d.github && <a class="btn" href={d.github} target="_blank" rel="noopener">原始碼 ↗</a>}
+      </div>
+    )}
+
+    <div class="hero-cover"><Cover title={d.title} cover={d.cover} color={d.color} size="lg" /></div>
+
+    <Gallery images={d.gallery} />
+
+    <div class="prose"><Content /></div>
+
+    <nav class="pager">
+      {prev ? <a href={`${base}projects/${prev.id}/`}><small>上一篇</small>{prev.data.title}</a> : <span />}
+      {next ? <a class="next" href={`${base}projects/${next.id}/`}><small>下一篇</small>{next.data.title}</a> : <span />}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .article { max-width: 760px; padding-top: 36px; }
+  .back { display: inline-block; font-size: 14px; color: var(--muted); text-decoration: none; margin-bottom: 26px; }
+  .back:hover { color: var(--accent); }
+  .top { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .cat { color: var(--faint); }
+  h1 { font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 8px 0 10px; }
+  .lead { font-size: 18px; color: var(--muted); margin: 0 0 16px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+  .hero-cover { margin-bottom: 36px; }
+
+  .prose { font-size: 16.5px; }
+  .prose :global(h2) { font-size: 21px; margin: 38px 0 10px; padding-left: 12px; border-left: 3px solid var(--accent); line-height: 1.4; }
+  .prose :global(h3) { font-size: 17px; margin: 26px 0 6px; }
+  .prose :global(p) { margin: 0 0 14px; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 22px; margin: 0 0 14px; }
+  .prose :global(li) { margin-bottom: 4px; }
+  .prose :global(strong) { font-weight: 700; }
+  .prose :global(a) { color: var(--accent); }
+  .prose :global(img) { border-radius: 10px; border: 1px solid var(--line); margin: 18px 0; }
+  .prose :global(blockquote) { margin: 18px 0; padding: 12px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; color: var(--muted); }
+  .prose :global(blockquote p) { margin: 0; }
+  .prose :global(code) { font-size: .9em; background: var(--accent-soft); padding: 1px 6px; border-radius: 5px; }
+
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .pager a { display: block; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); text-decoration: none; font-weight: 500; font-size: 15px; line-height: 1.45; }
+  .pager a:hover { border-color: var(--faint); }
+  .pager small { display: block; font-weight: 400; color: var(--faint); font-size: 12.5px; margin-bottom: 2px; }
+  .pager .next { text-align: right; }
+</style>
