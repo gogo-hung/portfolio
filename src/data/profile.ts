@@ -1,6 +1,7 @@
 // 自我介紹區的內容都在這裡改
 export const profile = {
   name: 'LI SHENGHUNG',
+  zhName: '李勝閎',
   title: '全端工程師・資管系學生',
   intro:
     '我是北商資管系五專的學生，喜歡把生活和工作裡遇到的麻煩事做成網站或系統來解決。' +
