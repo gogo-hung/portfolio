@@ -18,7 +18,7 @@ const { Content } = await render(project);
 const d = project.data;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
-<Base title={d.title} description={d.summary}>
+<Base title={d.title} description={d.summary} image={d.cover}>
   <article class="wrap article">
     <a class="back" href={`${base}#projects`}>← 回作品列表</a>
     <div class="top">
