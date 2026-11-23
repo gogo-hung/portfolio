@@ -28,6 +28,7 @@ const categories = ['全部', ...new Set(projects.map((p) => p.data.category))];
     </div>
     <div class="actions">
       <a class="btn primary" href="#projects">看作品</a>
+      <a class="btn" href={`${base}teaching/`}>教學經驗</a>
       <a class="btn" href={profile.links.github} target="_blank" rel="noopener">GitHub</a>
       {profile.links.email && <a class="btn" href={`mailto:${profile.links.email}`}>寄信給我</a>}
     </div>

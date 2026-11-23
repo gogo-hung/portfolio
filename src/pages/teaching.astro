@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import { teaching as t } from '../data/teaching';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const facts = [
+  { label: '任教單位', value: `${t.org}（${t.orgNote}）` },
+  { label: '職稱', value: t.role },
+  { label: '期間', value: t.period },
+  { label: '教學對象', value: t.audience },
+];
+---
+<Base title="教學經驗" description={t.summary}>
+  <article class="wrap article">
+    <a class="back" href={base}>← 回首頁</a>
+    <p class="eyebrow">教學經驗</p>
+    <h1>{t.org} {t.role}</h1>
+    <p class="lead">{t.summary}</p>
+
+    <dl class="facts">
+      {facts.map((f) => (
+        <div class="fact"><dt>{f.label}</dt><dd>{f.value}</dd></div>
+      ))}
+      <div class="fact wide">
+        <dt>上課形式</dt>
+        <dd class="chips">{t.formats.map((x) => <span class="tag">{x}</span>)}</dd>
+      </div>
+    </dl>
+
+    <Gallery images={t.gallery} title="教學照片" />
+
+    <section>
+      <h2>教學內容</h2>
+      <div class="cards">
+        {t.subjects.map((s, i) => (
+          <div class="card">
+            <span class="num">0{i + 1}</span>
+            <h3>{s.name}</h3>
+            <p>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2>上課形式</h2>
+      <ul class="formats">
+        {t.formatDetails.map((f) => (
+          <li><strong>{f.name}</strong>　{f.desc}</li>
+        ))}
+      </ul>
+    </section>
+
+    <nav class="pager">
+      <a href={`${base}#projects`}><small>接著看</small>我的作品 →</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .article { max-width: 760px; padding-top: 36px; }
+  .back { display: inline-block; font-size: 14px; color: var(--muted); text-decoration: none; margin-bottom: 26px; }
+  .back:hover { color: var(--accent); }
+  .eyebrow { margin: 0; font-size: 14px; font-weight: 500; color: var(--accent); }
+  h1 { font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 4px 0 10px; }
+  .lead { font-size: 17.5px; color: var(--muted); margin: 0 0 26px; }
+
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0 0 40px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .fact { background: var(--card); padding: 14px 18px; }
+  .fact.wide { grid-column: 1 / -1; }
+  dt { font-size: 13px; color: var(--faint); margin-bottom: 2px; }
+  dd { margin: 0; font-weight: 500; font-size: 16px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; font-weight: 400; }
+
+  section { margin-bottom: 38px; }
+  h2 { font-size: 21px; margin: 0 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); line-height: 1.4; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .num { font-size: 13px; color: var(--accent); font-weight: 700; }
+  h3 { margin: 2px 0 6px; font-size: 18px; }
+  .card p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.7; }
+  .formats { margin: 0; padding-left: 20px; font-size: 16px; }
+  .formats li { margin-bottom: 6px; }
+
+  .pager { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .pager a { display: inline-block; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); text-decoration: none; font-weight: 500; }
+  .pager a:hover { border-color: var(--faint); }
+  .pager small { display: block; font-weight: 400; color: var(--faint); font-size: 12.5px; }
+  @media (max-width: 640px) {
+    .facts { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>

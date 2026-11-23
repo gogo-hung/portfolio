@@ -42,6 +42,7 @@ const pageTitle = title ? `${title}｜${fullName}` : `${fullName}｜作品集`;
         <a href={base} class="logo">{profile.name}<span class="logo-zh">({profile.zhName})</span></a>
         <nav>
           <a href={`${base}#projects`}>作品</a>
+          <a href={`${base}teaching/`}>教學經驗</a>
           <a href={profile.links.github} target="_blank" rel="noopener">GitHub</a>
         </nav>
       </div>
@@ -83,7 +84,8 @@ const pageTitle = title ? `${title}｜${fullName}` : `${fullName}｜作品集`;
   .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 58px; }
   .logo { font-weight: 700; text-decoration: none; letter-spacing: .04em; }
   .logo-zh { font-weight: 500; letter-spacing: 0; margin-left: 2px; }
-  .nav nav { display: flex; gap: 22px; font-size: 15px; }
+  .nav nav { display: flex; gap: 22px; font-size: 15px; white-space: nowrap; }
+  @media (max-width: 480px) { .nav nav { gap: 14px; font-size: 14px; } .logo-zh { display: none; } }
   .nav nav a { text-decoration: none; color: var(--muted); }
   .nav nav a:hover { color: var(--ink); }
   .footer { color: var(--faint); font-size: 13px; padding-top: 48px; padding-bottom: 40px; }

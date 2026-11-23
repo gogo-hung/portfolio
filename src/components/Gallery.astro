@@ -1,13 +1,13 @@
 ---
 // 作品畫面：多張截圖，點一下放大，可左右切換
-interface Props { images: { src: string; caption?: string }[] }
-const { images } = Astro.props;
+interface Props { images: { src: string; caption?: string }[]; title?: string }
+const { images, title = '作品畫面' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const url = (s: string) => (s.startsWith('http') ? s : base + s.replace(/^\//, ''));
 ---
 {images.length > 0 && (
   <section class="gallery-wrap">
-    <h2 class="g-title">作品畫面 <span>{images.length} 張</span></h2>
+    <h2 class="g-title">{title} <span>{images.length} 張</span></h2>
     <div class={`gallery n${Math.min(images.length, 3)}`}>
       {images.map((img, i) => (
         <figure>
